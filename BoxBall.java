@@ -67,6 +67,7 @@ public class BoxBall
 
     /**
      * Return a random speed between -7 & 7 but never 0
+     * @return a random speed that is not zero
      */    
     private int randomSpeed()
 {
