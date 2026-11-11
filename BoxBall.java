@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.awt.geom.*;
+import java.util.Random;
 
 /**
  * Class BoxBall - a graphical ball that moves similar to the ball in PONG.
@@ -18,12 +19,15 @@ import java.awt.geom.*;
  * @author David J. Barnes
  * @author Bruce Quig
  * @author William Crosbie
+ * @author Fatimah Salih
  *
- * @version 2025.10.06
+ * @version 2026.11.03
  */
 
 public class BoxBall
 {
+    
+    private Random rand;
     private Box myBox;
 
     private Ellipse2D.Double circle;    // represents the ball
@@ -54,8 +58,25 @@ public class BoxBall
         diameter = ballDiameter;
 
         canvas = drawingCanvas;
+        
+        myBox = box;
+        rand = new Random();
+        xSpeed = randomSpeed();
+        ySpeed = randomSpeed();
     }
 
+    /**
+     * Return a random speed between -7 & 7 but never 0
+     */    
+    private int randomSpeed()
+{
+    int speed = rand.nextInt(7) + 1;   //  number from 1 to 7
+    if (rand.nextBoolean()) {
+        speed = -speed;           // half the time make it negative
+    }
+    return speed;
+}
+    
     /**
      * Draw this ball at its current position onto the canvas.
      **/
@@ -75,6 +96,9 @@ public class BoxBall
 
     /**
      * Move this ball according to its position and speed and redraw.
+     * 
+     * When the ball hits a wall of the box it is placed back in the 
+     * box and the speed in that direction is reversed
      **/
     public void move()
     {
@@ -82,10 +106,31 @@ public class BoxBall
         erase();
             
         // compute new position
+        xPosition += xSpeed;
+        yPosition += ySpeed;
   
         // figure out if it has hit the left or right wall
-        
+        if (xPosition <= myBox.getLeftWall()) 
+        {
+            xPosition = myBox.getLeftWall();
+            xSpeed = -xSpeed;
+        }
+        else if (xPosition + diameter >= myBox.getRightWall()) 
+        {
+            xPosition = myBox.getRightWall() - diameter;
+            xSpeed = -xSpeed;
+        }
         // figure out if it has hit the top or bottom wall
+        if (yPosition <= myBox.getTopWall()) 
+        {
+            yPosition = myBox.getTopWall();
+            ySpeed = -ySpeed;
+        }
+        else if (yPosition + diameter >= myBox.getBottomWall()) 
+        {
+            yPosition = myBox.getBottomWall() - diameter;
+            ySpeed = -ySpeed;
+        }
         
         draw();
     }    
